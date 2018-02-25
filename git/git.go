@@ -7,7 +7,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 
-	"github.com/codecoins/codecoins/pkg/log"
+	"github.com/codecoins/codecoins/log"
 )
 
 type Repository struct {
@@ -25,32 +25,33 @@ func (r *Repository) Checkout(b string) *Reference {
 func (r *Repository) Head() *Reference {
 	h, err := r.r.Head()
 	log.DieFatal(err)
-	return &Reference{r,h}
+	return &Reference{r, h}
 }
 
-type Branches struct{
+type Branches struct {
 }
 
-func(b *Branches)Next()Branch {
+func (b *Branches) Next() Branch {
 	return Branch{}
 }
 
-type Branch struct{
+type Branch struct {
 }
 
 func (b *Branch) Head() *Reference {
 	return &Reference{}
 }
 
-type Reference struct{
-	r *Repository
+type Reference struct {
+	r   *Repository
 	tip *plumbing.Reference
 }
+
 func (r *Reference) Commits() *Commits {
 	cIter, err := r.r.r.Log(&git.LogOptions{From: r.tip.Hash()})
 	log.DieFatal(err)
 	return &Commits{
-	cIter,
+		cIter,
 	}
 }
 
@@ -59,7 +60,7 @@ func Clone(repo string) *Repository {
 
 	var err error
 	R := new(Repository)
-	R.r,err = git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
+	R.r, err = git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
 		URL: repo,
 	})
 	if log.PrintError(err) != nil {
@@ -68,5 +69,3 @@ func Clone(repo string) *Repository {
 
 	return R
 }
-
-

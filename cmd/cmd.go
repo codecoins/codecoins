@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/codecoins/codecoins/pkg/config"
-	"github.com/codecoins/codecoins/pkg/git"
-	"github.com/codecoins/codecoins/pkg/log"
+	"github.com/codecoins/codecoins/config"
+	"github.com/codecoins/codecoins/git"
+	"github.com/codecoins/codecoins/log"
 )
 
 func main() {
@@ -14,32 +14,32 @@ func main() {
 
 func GetGit() {
 
-		repo,err := config.GetString("repo.url")
-		logLevel,err := config.GetString("log.level")
+	repo, err := config.GetString("repo.url")
+	logLevel, err := config.GetString("log.level")
 
-		log.DieFatal(err)
-		log.SetLevel(logLevel)
+	log.DieFatal(err)
+	log.SetLevel(logLevel)
 
-		r := git.Clone(repo)
-		ref := r.Head()
-		coms := ref.Commits()
+	r := git.Clone(repo)
+	ref := r.Head()
+	coms := ref.Commits()
 
-		commitCounter := 0
-		commitLimit := 10
+	commitCounter := 0
+	commitLimit := 10
 
-		for {
-			if commitCounter > commitLimit {
-				break
-			}
-			c,err := coms.Next()
-			if err != nil {
-				log.PrintError(err)
-				break
-			}
-			commitCounter++
-			log.Info(fmt.Sprintf("Commit: %s", c.Hash()))
-			log.Info(fmt.Sprintf("Commited by: %s", c.Author().Email()))
-			stat := c.Stats()
-			log.Info(fmt.Sprintf("Score: %d", stat.Score()))
+	for {
+		if commitCounter > commitLimit {
+			break
 		}
+		c, err := coms.Next()
+		if err != nil {
+			log.PrintError(err)
+			break
+		}
+		commitCounter++
+		log.Info(fmt.Sprintf("Commit: %s", c.Hash()))
+		log.Info(fmt.Sprintf("Commited by: %s", c.Author().Email()))
+		stat := c.Stats()
+		log.Info(fmt.Sprintf("Score: %d", stat.Score()))
+	}
 }
